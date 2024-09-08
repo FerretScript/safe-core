@@ -4,13 +4,13 @@ import time
 import os
 
 # Replace 'YOUR_API_KEY' with your actual Alpha Vantage API key
-API_KEY = '87Z74N17MP35PME1'
+API_KEY = 'WP3PXLK5CBKJ1ORQ'
 
 
 
 # List of companies (free API symbols)
-symbols = ['AAPL', 'GOOGL', 'TSLA', 'MSFT', 'NVDA', 'META', 'NFLX', 'MDB', 'WMT', 'COST', 
-           'KR', 'FDX', 'DIS', 'IBM', 'LMT', 'IBM', 'SORIANA.B', 'OSK']
+symbols = ['NFLX', 'MDB', 'WMT', 'COST', 'KR', 'FDX',
+            'DIS', 'IBM', 'LMT', 'SORIANA.B', 'OSK']
 
 
 # Base URL for Alpha Vantage API
