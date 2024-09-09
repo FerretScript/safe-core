@@ -7,7 +7,6 @@ import anthropic
 import os
 
 
-
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -40,6 +39,7 @@ try:
         embedding=embeddings,
         database='default',
     )
+
     logging.info("Initialized MyScale with embeddings and ClickHouse connection parameters")
 
     docsearch.add_documents(docs)
