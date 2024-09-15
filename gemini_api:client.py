@@ -9,11 +9,11 @@ class GeminiAPIClient:
             'Content-Type': 'application/json'
         }
 
-    def generate_content(self, prompt_text):
-        """Method to generate content using the Gemini API."""
+    def generate_content_stream(self, prompt_text):
+        """Method to generate content using the Gemini API and stream the response."""
         url = f"{self.api_url}?key={self.api_key}"
         
-        # The payload based on your provided curl command
+        # Constructing the payload based on the expected API format
         payload = {
             "contents": [
                 {
@@ -25,15 +25,18 @@ class GeminiAPIClient:
                 }
             ]
         }
-        
-        # Send the POST request
-        response = requests.post(url, headers=self.headers, data=json.dumps(payload))
-        
-        # Return the response as JSON
-        if response.status_code == 200:
-            return response.json()
-        else:
-            return {"error": response.status_code, "message": response.text}
+
+        # Send the POST request with streaming enabled
+        with requests.post(url, headers=self.headers, data=json.dumps(payload), stream=True) as response:
+            if response.status_code == 200:
+                # Stream the response in chunks
+                for chunk in response.iter_content(chunk_size=None):
+                    if chunk:
+                        # Decode chunk and print
+                        content_chunk = chunk.decode('utf-8')
+                        print(content_chunk)
+            else:
+                print({"error": response.status_code, "message": response.text})
 
 # Example usage:
 if __name__ == "__main__":
@@ -41,8 +44,8 @@ if __name__ == "__main__":
 
     gemini_client = GeminiAPIClient(api_key)
     
-    # Call the API with a sample prompt
-    prompt_text = "Explain how AI works"
-    result = gemini_client.generate_content(prompt_text)
-    
-    print(json.dumps(result, indent=2))  # Pretty print the result
+    # Define the prompt text (simple tortilla recipe example)
+    prompt_text = "Explain how to make some tortillas de harina"
+
+    # Generate content with the prompt
+    gemini_client.generate_content_stream(prompt_text)
