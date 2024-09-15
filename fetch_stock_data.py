@@ -5,7 +5,7 @@ import json
 import os
 
 # Replace 'YOUR_API_KEY' with your actual Alpha Vantage API key
-API_KEY = '87Z74N17MP35PME1'
+API_KEY = 'M69TAAW313T9U08S'
 
 # List of companies (free API symbols)
 symbols = ['AAPL', 'GOOGL', 'TSLA', 'MSFT', 'META', 'MDB', 'WMT', 'COST', 
