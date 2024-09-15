@@ -61,6 +61,8 @@ logging.info(f"Split documents into {len(split_docs)} chunks")
 embeddings = HuggingFaceEmbeddings(model_name="BAAI/bge-base-en-v1.5")
 logging.info("Initialized HuggingFaceEmbeddings with model 'BAAI/bge-base-en-v1.5'")
 
+######
+
 try:
     # Initialize MyScale with the ClickHouse connection parameters and embeddings
     docsearch = MyScale(
