@@ -12,7 +12,6 @@ API_KEY = 'WP3PXLK5CBKJ1ORQ'
 symbols = ['NFLX', 'MDB', 'WMT', 'COST', 'KR', 'FDX',
             'DIS', 'IBM', 'LMT', 'SORIANA.B', 'OSK']
 
-
 # Base URL for Alpha Vantage API
 BASE_URL = 'https://www.alphavantage.co/query'
 
