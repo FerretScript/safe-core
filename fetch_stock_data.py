@@ -9,8 +9,7 @@ API_KEY = '87Z74N17MP35PME1'
 
 
 # List of companies (free API symbols)
-symbols = ['AAPL', 'GOOGL', 'TSLA', 'MSFT', 'NVDA', 'META', 'NFLX', 'MDB', 'WMT', 'COST', 
-           'KR', 'FDX', 'DIS', 'IBM', 'LMT', 'IBM', 'SORIANA.B', 'OSK']
+symbols = ['AAPL', 'GOOGL', 'TSLA', 'MSFT', 'NVDA', 'META']
 
 
 # Base URL for Alpha Vantage API
