@@ -1,60 +1,33 @@
 import requests
-import pandas as pd
-import time
 import json
+import time
 import os
 
 # Replace 'YOUR_API_KEY' with your actual Alpha Vantage API key
-API_KEY = 'M69TAAW313T9U08S'
+API_KEY = '87Z74N17MP35PME1'
 
 # List of companies (free API symbols)
-symbols = ['AAPL', 'GOOGL', 'TSLA', 'MSFT', 'META', 'MDB', 'WMT', 'COST', 
-           'KR', 'T', 'FDX', 'DIS', 'BA', 'LMT', 'IBM', 'SORIANA.B', 'OSK']  # Apple, Google, Tesla, Microsoft
+symbols = ['AAPL', 'GOOGL', 'TSLA', 'MSFT']  # Apple, Google, Tesla, Microsoft
 
 # Base URL for Alpha Vantage API
 BASE_URL = 'https://www.alphavantage.co/query'
 
-# Function to retrieve time series data
-def get_time_series_data(symbol, api_key):
+# Function to retrieve income statement data
+def get_income_statement(symbol, api_key):
     params = {
-        'function': 'TIME_SERIES_DAILY',  # Retrieves daily time series data
+        'function': 'INCOME_STATEMENT',  # Retrieves income statement data
         'symbol': symbol,
         'apikey': api_key,
-        'outputsize': 'compact',  # 'compact' for last 100 data points; 'full' for full-length data
     }
 
     response = requests.get(BASE_URL, params=params)
 
     if response.status_code == 200:
         data = response.json()
-        if 'Time Series (Daily)' in data:
-            # Extract the time series data
-            time_series = data['Time Series (Daily)']
-
-            # Convert the time series into a DataFrame
-            df = pd.DataFrame.from_dict(time_series, orient='index')
-
-            # Rename the columns for clarity
-            df.rename(columns={
-                '1. open': 'Open',
-                '2. high': 'High',
-                '3. low': 'Low',
-                '4. close': 'Close',
-                '5. volume': 'Volume'
-            }, inplace=True)
-
-            # Convert the index to datetime
-            df.index = pd.to_datetime(df.index)
-
-            # Convert data types to numeric
-            df = df.astype(float)
-
-            # Sort the DataFrame by date
-            df.sort_index(inplace=True)
-
-            return df.to_dict()  # Return as dictionary for saving in JSON
+        if 'annualReports' in data:
+            return data['annualReports']  # Return only the annual reports part for clarity
         else:
-            print("Time series data not found in the response.")
+            print(f"Income statement data not found in the response for {symbol}.")
             return None
     else:
         print(f"Error: {response.status_code}")
@@ -85,13 +58,13 @@ def get_company_overview(symbol, api_key):
 def process_company_data(symbol, api_key):
     print(f"\nProcessing data for {symbol}...")
 
-    # Create a dictionary to store both time series and overview data
+    # Create a dictionary to store income statement and overview data
     company_data = {}
 
-    # Retrieve time series data
-    time_series_data = get_time_series_data(symbol, api_key)
-    if time_series_data:
-        company_data['time_series'] = time_series_data
+    # Retrieve income statement data
+    income_statement_data = get_income_statement(symbol, api_key)
+    if income_statement_data:
+        company_data['income_statement'] = income_statement_data
 
     # Retrieve company overview
     company_overview = get_company_overview(symbol, api_key)
