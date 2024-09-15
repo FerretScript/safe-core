@@ -1,12 +1,15 @@
 import requests
 import pandas as pd
 import time
+import json
+import os
 
 # Replace 'YOUR_API_KEY' with your actual Alpha Vantage API key
 API_KEY = '87Z74N17MP35PME1'
 
 # List of companies (free API symbols)
-symbols = ['AAPL', 'GOOGL', 'TSLA', 'MSFT']  # Apple, Google, Tesla, Microsoft
+symbols = ['AAPL', 'GOOGL', 'TSLA', 'MSFT', 'META', 'MDB', 'WMT', 'COST', 
+           'KR', 'T', 'FDX', 'DIS', 'BA', 'LMT', 'IBM', 'SORIANA.B', 'OSK']  # Apple, Google, Tesla, Microsoft
 
 # Base URL for Alpha Vantage API
 BASE_URL = 'https://www.alphavantage.co/query'
@@ -49,7 +52,7 @@ def get_time_series_data(symbol, api_key):
             # Sort the DataFrame by date
             df.sort_index(inplace=True)
 
-            return df
+            return df.to_dict()  # Return as dictionary for saving in JSON
         else:
             print("Time series data not found in the response.")
             return None
@@ -78,43 +81,39 @@ def get_company_overview(symbol, api_key):
         print(f"Error: {response.status_code}")
         return None
 
-# Function to process and print data for each company
+# Function to process and save data for each company
 def process_company_data(symbol, api_key):
     print(f"\nProcessing data for {symbol}...")
 
+    # Create a dictionary to store both time series and overview data
+    company_data = {}
+
     # Retrieve time series data
-    time_series_df = get_time_series_data(symbol, api_key)
-    if time_series_df is not None:
-        print(f"\nTime Series Data for {symbol} (Latest 5 Days):")
-        print(time_series_df.head())
+    time_series_data = get_time_series_data(symbol, api_key)
+    if time_series_data:
+        company_data['time_series'] = time_series_data
 
     # Retrieve company overview
     company_overview = get_company_overview(symbol, api_key)
-    if company_overview is not None:
-        print(f"\nCompany Overview for {symbol}:")
-        print(f"Market Capitalization: {company_overview.get('MarketCapitalization', 'N/A')}")
-        print(f"EBITDA: {company_overview.get('EBITDA', 'N/A')}")
-        print(f"PE Ratio: {company_overview.get('PERatio', 'N/A')}")
-        print(f"Dividend Yield: {company_overview.get('DividendYield', 'N/A')}")
-        print(f"Revenue (TTM): {company_overview.get('RevenueTTM', 'N/A')}")
-        print(f"Gross Profit (TTM): {company_overview.get('GrossProfitTTM', 'N/A')}")
-        print(f"Operating Margin (TTM): {company_overview.get('OperatingMarginTTM', 'N/A')}")
-        
-        # Highlight potential problems and insights based on this data
-        print("\n--- Business Insights and Potential Issues ---")
-        # Example: High PE Ratio warning
-        pe_ratio = float(company_overview.get('PERatio', 0))
-        if pe_ratio > 30:
-            print(f"Warning: High PE Ratio ({pe_ratio}) - The stock may be overvalued.")
-        else:
-            print(f"PE Ratio is within a reasonable range: {pe_ratio}")
+    if company_overview:
+        company_data['overview'] = company_overview
 
-        # Example: Check for low operating margins
-        operating_margin = float(company_overview.get('OperatingMarginTTM', 0))
-        if operating_margin < 0.1:
-            print(f"Warning: Low Operating Margin ({operating_margin}). The company may struggle with profitability.")
-        else:
-            print(f"Operating Margin looks healthy: {operating_margin}")
+    # Save the data to a .json file
+    if company_data:
+        # Create directory for the data if it doesn't exist
+        if not os.path.exists('company_data'):
+            os.makedirs('company_data')
+        
+        # Define the path to save the JSON file
+        filepath = f'company_data/{symbol}.json'
+        
+        # Save the company data as JSON
+        with open(filepath, 'w') as json_file:
+            json.dump(company_data, json_file, indent=4)
+        
+        print(f"Data for {symbol} saved to {filepath}")
+    else:
+        print(f"No data available for {symbol}.")
 
 # Iterate over the companies and process their data
 for symbol in symbols:
